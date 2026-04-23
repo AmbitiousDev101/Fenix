@@ -1,0 +1,13 @@
+version: 2
+sources:
+  - name: iceberg
+    description: "Iceberg tables written by PySpark"
+    tables:
+      - name: silver_matches
+        description: "Unified match data from football-data.org and thesportsdb.com"
+      - name: silver_standings
+        description: "League standings from football-data.org"
+      - name: gold_team_form
+        description: "Per-team per-match form metrics with rolling averages"
+      - name: gold_match_results
+        description: "Match results with computed result field"

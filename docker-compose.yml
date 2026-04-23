@@ -1,0 +1,61 @@
+version: "3.8"
+
+services:
+  redpanda:
+    image: docker.redpanda.com/redpandadata/redpanda:latest
+    container_name: fenix-redpanda
+    mem_limit: 600m
+    command:
+      - redpanda start
+      - --overprovisioned
+      - --smp 1
+      - --memory 512M
+      - --reserve-memory 0M
+      - --node-id 0
+      - --check=false
+      - --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092
+      - --advertise-kafka-addr internal://redpanda:9092,external://localhost:19092
+      - --pandaproxy-addr internal://0.0.0.0:8082,external://0.0.0.0:18082
+      - --advertise-pandaproxy-addr internal://redpanda:8082,external://localhost:18082
+    ports:
+      - "19092:19092"
+      - "18082:18082"
+    volumes:
+      - redpanda_data:/var/lib/redpanda/data
+    healthcheck:
+      test: ["CMD", "rpk", "cluster", "health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  airflow:
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
+    container_name: fenix-airflow
+    profiles: ["airflow"]
+    mem_limit: 1536m
+    ports:
+      - "8080:8080"
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=SequentialExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=sqlite:////opt/airflow/airflow.db
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW__CORE__DAGS_FOLDER=/opt/airflow/fenix/airflow/dags
+      - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=true
+      - FOOTBALL_DATA_API_KEY=${FOOTBALL_DATA_API_KEY}
+      - DEV_MODE=${DEV_MODE:-true}
+      - REDPANDA_BROKER=redpanda:9092
+      - LAKEHOUSE_PATH=/opt/airflow/fenix/lakehouse
+    volumes:
+      - .:/opt/airflow/fenix
+      - airflow_data:/opt/airflow
+    depends_on:
+      redpanda:
+        condition: service_healthy
+    command: airflow standalone
+    restart: unless-stopped
+
+volumes:
+  redpanda_data:
+  airflow_data:

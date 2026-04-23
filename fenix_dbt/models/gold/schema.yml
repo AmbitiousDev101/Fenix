@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: gold_team_form
+    description: "Per-team per-match form metrics with rolling averages"
+    columns:
+      - name: team_id
+        tests: [not_null]
+      - name: match_id
+        tests: [not_null]
+      - name: result
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['W', 'D', 'L']
+      - name: form_trend
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['improving', 'declining']
+      - name: goals_scored
+        tests: [not_null]
+      - name: goals_conceded
+        tests: [not_null]
+      - name: points_last5
+        tests: [not_null]
+
+  - name: gold_match_results
+    description: "Match results with computed result field"
+    columns:
+      - name: match_id
+        tests: [not_null, unique]
+      - name: result
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['home_win', 'draw', 'away_win']
+      - name: home_score
+        tests: [not_null]
+      - name: away_score
+        tests: [not_null]
+
+  - name: gold_head_to_head
+    description: "Aggregated H2H stats per team pair"
+    columns:
+      - name: team_a_id
+        tests: [not_null]
+      - name: team_b_id
+        tests: [not_null]
+
+  - name: gold_league_standings
+    description: "League standings computed from match results"
+    columns:
+      - name: team_id
+        tests: [not_null, unique]
+      - name: position
+        tests: [not_null]

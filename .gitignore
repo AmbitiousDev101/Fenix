@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Environment Variables
+.env
+
+# Data Lakehouse
+lakehouse/
+!lakehouse/.gitkeep
+hadoop/
+spark-warehouse/
+derby.log
+metastore_db/
+*.duckdb
+*.duckdb.wal
+
+# Orchestration & dbt
+airflow/logs/
+airflow/airflow.db
+airflow/airflow.cfg
+airflow/webserver_config.py
+fenix_dbt/target/
+fenix_dbt/logs/
+fenix_dbt/dbt_packages/
+fenix_dbt/profiles.yml
+
+# IDEs & System
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+out.txt
