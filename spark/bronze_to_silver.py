@@ -123,7 +123,7 @@ def process_matches():
         [str(f) for f in [Path(p) for p in files]]
     )
 
-    if raw_df.rdd.isEmpty():
+    if raw_df.limit(1).count() == 0:
         logger.warning("  [WARN] Bronze match data is empty. Skipping.")
         return
 
@@ -136,7 +136,7 @@ def process_matches():
         fd_df = raw_df.filter(
             F.col("_metadata.source") == "football-data.org"
         )
-        if not fd_df.rdd.isEmpty():
+        if fd_df.limit(1).count() > 0:
             dfs_to_union.append(_flatten_football_data(fd_df))
             logger.info("  [OK] Flattened football-data.org matches")
 
@@ -145,7 +145,7 @@ def process_matches():
         tsdb_df = raw_df.filter(
             F.col("_metadata.source") == "thesportsdb.com"
         )
-        if not tsdb_df.rdd.isEmpty():
+        if tsdb_df.limit(1).count() > 0:
             dfs_to_union.append(_flatten_thesportsdb(tsdb_df))
             logger.info("  [OK] Flattened thesportsdb.com matches")
 
@@ -209,7 +209,7 @@ def process_standings():
         [str(f) for f in [Path(p) for p in files]]
     )
 
-    if raw_df.rdd.isEmpty():
+    if raw_df.limit(1).count() == 0:
         logger.warning("  [WARN] Bronze standings data is empty. Skipping.")
         return
 

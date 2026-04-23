@@ -26,7 +26,7 @@ def build_team_form():
         logger.error(f"  [FAIL] Could not read Silver matches: {e}")
         return
 
-    if matches.rdd.isEmpty():
+    if matches.limit(1).count() == 0:
         logger.warning("  [WARN] No finished matches in Silver. Skipping team_form.")
         return
 
@@ -122,7 +122,7 @@ def build_match_results():
         logger.error(f"  [FAIL] Could not read Silver matches: {e}")
         return
 
-    if matches.rdd.isEmpty():
+    if matches.limit(1).count() == 0:
         logger.warning("  [WARN] No finished matches in Silver. Skipping match_results.")
         return
 

@@ -118,7 +118,7 @@ def run_dbt():
     result = subprocess.run(
         ["dbt", "run", "--project-dir", str(dbt_dir), "--profiles-dir", str(dbt_dir),
          "--vars", f'{{"warehouse_path": "{warehouse_abs}"}}'],
-        capture_output=True, text=True, cwd=str(PROJECT_ROOT)
+        capture_output=True, text=True, cwd=str(PROJECT_ROOT), shell=True
     )
     print(result.stdout)
     if result.returncode != 0:
@@ -130,7 +130,7 @@ def run_dbt():
     result = subprocess.run(
         ["dbt", "test", "--project-dir", str(dbt_dir), "--profiles-dir", str(dbt_dir),
          "--vars", f'{{"warehouse_path": "{warehouse_abs}"}}'],
-        capture_output=True, text=True, cwd=str(PROJECT_ROOT)
+        capture_output=True, text=True, cwd=str(PROJECT_ROOT), shell=True
     )
     print(result.stdout)
     if result.returncode != 0:

@@ -7,15 +7,18 @@ No other file should ever create a SparkSession.
 import os
 import sys
 
-# Prevent PySpark workers from crashing on Windows due to encoding issues
-os.environ["PYTHONIOENCODING"] = "utf8"
-os.environ["PYTHONLEGACYWINDOWSSTDIO"] = "utf8"
-
 if os.name == "nt":
+    # Ensure UTF-8 for Windows workers to prevent encoding crashes
+    os.environ["PYTHONIOENCODING"] = "utf8"
+    os.environ["PYTHONLEGACYWINDOWSSTDIO"] = "utf8"
+    
     # Prepend real Python to PATH so workers don't hit the Windows Store shim
     os.environ["PATH"] = sys.prefix + os.pathsep + os.environ.get("PATH", "")
-    os.environ["PYSPARK_PYTHON"] = "python.exe"
-    os.environ["PYSPARK_DRIVER_PYTHON"] = "python.exe"
+    
+    # Force Spark to use the absolute path of the current interpreter
+    python_exe = sys.executable
+    os.environ["PYSPARK_PYTHON"] = python_exe
+    os.environ["PYSPARK_DRIVER_PYTHON"] = python_exe
     os.environ["SPARK_LOCAL_IP"] = "127.0.0.1"
 else:
     os.environ["PYSPARK_PYTHON"] = sys.executable
